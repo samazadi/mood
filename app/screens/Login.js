@@ -17,7 +17,7 @@ export default class Login extends React.Component {
     }
   }
 
-  login = async () => {
+  onLoginPress = async () => {
     console.log('pressed button')
   } 
 
@@ -46,10 +46,13 @@ export default class Login extends React.Component {
             placeholder={'Password'}
             secureTextEntry={true}
           />
-          <LoginButton onPress={this.login}/>
+          <LoginButton onPress={this.onLoginPress}/>
         </View>
         <View style={styles.signupContainer}>
-          <Text onPress={() => navigate('Signup')}>Don't have an account? Sign up here</Text>
+          <Text onPress={() => navigate('Signup')}>
+            <Text>Don't have an account? Sign up </Text>
+            <Text style={{color: '#2980b9'}}>here</Text>
+          </Text>
         </View>
       </View>
     )
@@ -64,7 +67,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2980b9',
     flex: 3,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   formContainer: {
     flex: 6,
@@ -72,6 +75,8 @@ const styles = StyleSheet.create({
   },
   signupContainer: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   formInput: {
     height: 40, 

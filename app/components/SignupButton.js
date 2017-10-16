@@ -6,7 +6,7 @@ import {
     Text, 
 } from 'react-native';
 
-import { SimpleLineIcons } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 
 export default class LoginButton extends React.Component {
     render() {
@@ -17,7 +17,7 @@ export default class LoginButton extends React.Component {
                 underlayColor={'#1b557a'}
             >
                 <View style={styles.buttonContainer}>
-                    <SimpleLineIcons name='login' size={20} color='white'/>
+                    <FontAwesome name='user-plus' size={20} color='white'/>
                     <Text style={styles.buttonText}>
                         Signup
                     </Text>
