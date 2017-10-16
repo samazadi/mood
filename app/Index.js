@@ -20,7 +20,8 @@ const homeTab = TabNavigator({
     navigationOptions: {
       tabBarIcon: ({ tintColor }) => (
         <FontAwesome name='users' size={20} color={tintColor} />
-      )
+      ),
+      title: 'Mood',
     }
   },
   Settings: {
@@ -28,19 +29,32 @@ const homeTab = TabNavigator({
     navigationOptions: {
       tabBarIcon: ({ tintColor }) => (
         <FontAwesome name='gear' size={20} color={tintColor} />
-      )
+      ),
+      title: 'Settings',
     }
   },
 })
 
 const RouteConfigs = {
-  Login: { screen: Login },
-  Signup: { screen: Signup },
-  Home: { screen: homeTab }, 
+  Login: { 
+    screen: Login,
+    navigationOptions: {
+      header: null,
+    }
+  },
+  Signup: { 
+    screen: Signup,
+    navigationOptions: {
+      header: null,
+    }
+  },
+  Home: { 
+    screen: homeTab,
+  }, 
 }
 
 const StackNavigatorConfig = {
   headerMode: 'none',
 }
 
-export default StackNavigator(RouteConfigs, StackNavigatorConfig)
+export default StackNavigator(RouteConfigs)

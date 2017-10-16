@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
     color: 'red',
-    textAlign: 'center',
-    marginTop: 10
+    //textAlign: 'center',
+    marginTop: 10,
   }
 })
