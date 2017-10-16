@@ -45,6 +45,7 @@ export default class Login extends React.Component {
             value={this.state.password}
             placeholder={'Password'}
             secureTextEntry={true}
+            autoCorrect={false}
           />
           <LoginButton onPress={this.onLoginPress}/>
         </View>

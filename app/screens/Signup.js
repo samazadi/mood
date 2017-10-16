@@ -22,21 +22,38 @@ export default class Signup extends React.Component {
   }
 
   onSignupPress = async () => {
-    console.log('pressed button')
     this.setState({
       error: '',
       showSpinner: true,
     })
+
+    const { email, password } = this.state
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+      .then(() => {
+        this.setState({
+          error: '',
+          showSpinner: false,
+        })
+        this.props.navigation.navigate('Home')
+      })
+      .catch((error) => {
+        this.setState({
+          error: error,
+          showSpinner: false,
+        })
+      })
   }
   
   renderFormOrSpinner() {
     if (this.state.showSpinner) {
       return (
-        <View style={{flex: 1}}>
-          <ActivityIndicator color='red' animating={this.state.showSpinner} style={{alignItems: 'center', justifyContent: 'center'}} size='large'/>
-        </View>        
+        <View style={styles.spinnerContainer}>
+          <ActivityIndicator animating={true} size='large'/>
+        </View>     
       )
     } else {
+      const { navigate } = this.props.navigation
+
       return (
         <View style={styles.container}>
           <View style={styles.logoContainer}>
@@ -58,8 +75,10 @@ export default class Signup extends React.Component {
               value={this.state.password}
               placeholder={'Password'}
               secureTextEntry={true}
+              autoCorrect={false}
             />
             <SignupButton onPress={this.onSignupPress}/>
+            <Text style={styles.errorMessage}>{this.state.error.toString()}</Text>
           </View>
           <View style={styles.signupContainer}>
             <Text onPress={() => navigate('Login')}>
@@ -73,8 +92,6 @@ export default class Signup extends React.Component {
   }
 
   render() {
-    const { navigate } = this.props.navigation
-
     return (
       <View style={styles.container}>
         {this.renderFormOrSpinner()}
@@ -110,4 +127,14 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     padding: 5,
   },
+  spinnerContainer: {
+    alignContent: 'center', 
+    justifyContent: 'center', 
+    flex: 1
+  },
+  errorMessage: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 10
+  }
 })
