@@ -26,13 +26,20 @@ export default class Signup extends React.Component {
       error: '',
       showSpinner: true,
     })
-
     const { email, password } = this.state
     firebase.auth().createUserWithEmailAndPassword(email, password)
       .then(() => {
         this.setState({
           error: '',
           showSpinner: false,
+        })
+        const user = firebase.auth().currentUser
+        firebase.database().ref('users/' + user.uid).set({
+          username: email,
+          mood: '',
+          email: email,
+          profile_picture: 'profile url goes here',
+          friends: ''
         })
         this.props.navigation.navigate('Home')
       })
