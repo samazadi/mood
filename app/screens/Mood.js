@@ -1,26 +1,20 @@
 import React from 'react'
+import FriendListItem from '../components/FriendListItem'
 import { 
   StyleSheet, 
   Text, 
-  View, 
-  Image, 
-  TextInput, 
+  View,
+  ListView, 
 } from 'react-native';
 
 export default class Mood extends React.Component {
-  render() {
+  render() { 
     return (
-      <View style={styles.container}>
-        <Text>mood page here</Text>
+      <View style={{flex:1}}>
+        <FriendListItem/>
       </View>
     )
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  }
-})
+

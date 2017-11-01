@@ -37,8 +37,7 @@ export default class Signup extends React.Component {
         firebase.database().ref('users/' + user.uid).set({
           username: email,
           mood: '',
-          email: email,
-          profile_picture: 'profile url goes here',
+          profilePic: 'https://firebasestorage.googleapis.com/v0/b/mood-d5b8c.appspot.com/o/default_images%2Fplaceholder_user.png?alt=media&token=27c3d186-2104-4f82-b0c6-520f1d22f079',
           friends: ''
         })
         this.props.navigation.navigate('Home')

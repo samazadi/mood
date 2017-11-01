@@ -58,7 +58,7 @@ export default class Login extends React.Component {
     })
 
     const { email, password } = this.state
-    firebase.auth().createUserWithEmailAndPassword(email, password)
+    firebase.auth().signInWithEmailAndPassword(email, password)
       .then(() => {
         this.setState({
           error: '',
@@ -112,7 +112,7 @@ export default class Login extends React.Component {
           </View>
           <View style={styles.signupContainer}>
             <Text onPress={() => navigate('Signup')}>
-              <Text>Have an account? Log in </Text>
+              <Text>Don't have an account? Sign up </Text>
               <Text style={{color: '#2980b9'}}>here</Text>
             </Text>
           </View>
