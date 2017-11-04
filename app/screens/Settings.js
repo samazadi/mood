@@ -10,7 +10,8 @@ import {
   View, 
   Image, 
   TextInput,
-  TouchableHighlight, 
+  TouchableHighlight,
+  ScrollView, 
 } from 'react-native'
 
 export default class Settings extends React.Component {
@@ -97,7 +98,7 @@ export default class Settings extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <View style={styles.profilePicContainer}>
           <Image 
               style={styles.profilePic}
@@ -182,7 +183,7 @@ export default class Settings extends React.Component {
             <UserSearchButton onPress={() => this.props.navigation.navigate('Search')} />
           </View>
         </View>
-      </View>
+      </ScrollView>
     )
   }
 }

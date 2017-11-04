@@ -7,6 +7,7 @@ import {
   View,
   TouchableHighlight,
   ListView,
+  Image,
 } from 'react-native'
 
 export default class SearchResults extends React.Component {
@@ -32,6 +33,7 @@ export default class SearchResults extends React.Component {
     matchingUserNames.forEach((snapshot) => {
       searchResultsArray.push({
         username: snapshot.val().username,
+        profilePic: snapshot.val().profilePic,
         key: snapshot.key
       })
     })
@@ -42,10 +44,15 @@ export default class SearchResults extends React.Component {
 
   renderRow = (rowData) => {
     return (
-      <TouchableHighlight 
+      <TouchableHighlight
+        underlayColor='#f8f8f8' 
         onPress={() => console.log('hit')}>
-        <View style={{flexDirection:'row', padding:10}} >
-          <View style={{justifyContent:'center', marginLeft:10}} >
+        <View style={{flexDirection:'row', padding:15}} >
+          <Image 
+            source={{uri: rowData.profilePic}}
+            style={styles.profilePic}
+          />
+          <View style={{justifyContent:'center', marginLeft:15}}>
             <Text style={{fontSize:18}}>{rowData.username}</Text>
           </View>
         </View>
@@ -75,7 +82,11 @@ export default class SearchResults extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'blue'
+  },
+  profilePic: {
+    height: 60,
+    borderRadius: 30,
+    width: 60
   },
 })
 
