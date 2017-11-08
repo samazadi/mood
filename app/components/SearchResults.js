@@ -19,11 +19,12 @@ export default class SearchResults extends React.Component {
     this.state = {
       modalVisible: false,
       userData: {},
+      //friendRequestPending: false,
       dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps = (nextProps) => {
     this.searchUsernames(nextProps.searchInput)
   }
 
@@ -52,11 +53,8 @@ export default class SearchResults extends React.Component {
       <TouchableHighlight
         underlayColor='#f8f8f8' 
         onPress={() => {
-          //this.addFriendModal(rowData)
-          this.setState({
-            modalVisible: true,
-            userData: rowData,
-          })
+          this.setState({userData: rowData})
+          this.updateRequestPendingText(rowData)
         }}>
         <View style={{flexDirection:'row', padding:15}} >
           <Image 
@@ -69,6 +67,40 @@ export default class SearchResults extends React.Component {
         </View>
       </TouchableHighlight>
     )
+  }
+
+  onAddFriendPress = () => {
+    this.setState({
+      friendRequestPending: true,
+    })
+    const { key } = this.state.userData
+    const currentUserId = firebase.auth().currentUser.uid 
+    const requestsRoot = firebase.database().ref('users/' + key + '/requests/' + currentUserId)
+
+    requestsRoot.once('value').then((snap) => {
+      requestsRoot.set({
+        requestPending: true,
+      })
+    })
+  }
+
+  updateRequestPendingText = (data) => {
+    const key = data.key
+    const currentUserId = firebase.auth().currentUser.uid 
+    const requestsRoot = firebase.database().ref('users/' + key + '/requests/' + currentUserId)
+
+    requestsRoot.once('value').then((snap) => {
+      if(snap.exists()) {
+        this.setState({
+          friendRequestPending: true,
+        })
+      } else {
+        this.setState({
+          friendRequestPending: false,
+        })
+      }
+    })
+    this.setState({modalVisible: true,})
   }
 
   renderSeparator = (sectionID, rowID) => {
@@ -99,7 +131,11 @@ export default class SearchResults extends React.Component {
                 style={styles.modalProfilePic}
               />
               <Text style={styles.modalText}>{this.state.userData.username}</Text>
-              <AddFriendButton/>
+              <AddFriendButton 
+                onPress={this.onAddFriendPress} 
+                disabled={false} 
+                friendRequestPending={this.state.friendRequestPending}
+              />
             </View>
           </Modal>
         </View>

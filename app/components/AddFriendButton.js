@@ -12,14 +12,15 @@ export default class AddFriendButton extends React.Component {
     render() {
         return (
             <TouchableHighlight 
-                style={styles.button}
-                onPress={()=>console.log('hi')}
+                style={this.props.friendRequestPending ? styles.buttonDisabled : styles.button}
+                onPress={this.props.onPress}
                 underlayColor={'#1b557a'}
+                disabled={this.props.friendRequestPending ? true : false}
             >
                 <View style={styles.buttonContainer}>
                     <Ionicons name='ios-person-add' size={20} color='white'/>
                     <Text style={styles.buttonText}>
-                        Send Friend Request
+                        {this.props.friendRequestPending ? 'Request Pending' : 'Add Friend'}
                     </Text>
                 </View>
             </TouchableHighlight>
@@ -32,6 +33,13 @@ const styles = StyleSheet.create({
         height: 40,
         width: 200,
         backgroundColor: '#2980b9',
+        borderRadius: 10,
+        marginTop: 25,
+    },
+    buttonDisabled : {
+        height: 40,
+        width: 200,
+        backgroundColor: 'rgba(41, 128, 185, 0.5)',
         borderRadius: 10,
         marginTop: 25,
     },
