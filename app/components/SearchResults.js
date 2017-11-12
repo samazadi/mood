@@ -77,9 +77,9 @@ export default class SearchResults extends React.Component {
     const currentUserId = firebase.auth().currentUser.uid 
     const requestsRoot = firebase.database().ref('users/' + key + '/requests/' + currentUserId)
 
-    requestsRoot.once('value').then((snap) => {
+    firebase.database().ref('users/' + currentUserId + '/username').once('value', (snap) => {
       requestsRoot.set({
-        requestPending: true,
+        requestFrom: snap.val()
       })
     })
   }

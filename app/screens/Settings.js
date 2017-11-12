@@ -177,12 +177,12 @@ export default class Settings extends React.Component {
             autoCorrect={false}
           />
         </View>
-        <Text style={styles.pageDivider}>Add Friends</Text>
+        {/* <Text style={styles.pageDivider}>Add Friends</Text>
         <View style={styles.container}>
           <View style={styles.formContainer}>
             <UserSearchButton onPress={() => this.props.navigation.navigate('Search')} />
           </View>
-        </View>
+        </View> */}
       </ScrollView>
     )
   }

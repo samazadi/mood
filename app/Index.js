@@ -9,6 +9,7 @@ import Signup from './screens/Signup'
 import Mood from './screens/Mood'
 import Settings from './screens/Settings'
 import Search from './screens/Search'
+import FriendRequests from './screens/FriendRequests'
 
 const firebaseConfig = {
   apiKey: "AIzaSyAs8kiZwakuQACvAIBRrLktGprs5pNDoQo",
@@ -28,6 +29,24 @@ const homeTab = TabNavigator({
       title: 'Mood',
     }
   },
+  FriendRequests: {
+    screen: FriendRequests,
+    navigationOptions: {
+      tabBarIcon: ({ tintColor }) => (
+        <FontAwesome name='user-plus' size={20} color={tintColor} />
+      ),
+      title: 'Friend Requests',
+    }
+  },
+  Search: {
+    screen: Search,
+    navigationOptions: {
+      tabBarIcon: ({ tintColor }) => (
+        <FontAwesome name='search' size={20} color={tintColor} />
+      ),
+      title: 'Search',
+    }
+  },
   Settings: {
     screen: Settings,
     navigationOptions: {
@@ -37,7 +56,16 @@ const homeTab = TabNavigator({
       title: 'Settings',
     }
   },
-})
+}
+  , {
+    tabBarOptions: {
+      style: {
+        paddingBottom: 5,
+        height: 55,
+      }
+    }
+  }
+)
 
 const RouteConfigs = {
   Login: { 
@@ -55,12 +83,6 @@ const RouteConfigs = {
   Home: { 
     screen: homeTab,
   },
-  Search: {
-    screen: Search,
-    navigationOptions: {
-      title: <Text>Add Username</Text>,
-    }
-  } 
 }
 
 const StackNavigatorConfig = {
