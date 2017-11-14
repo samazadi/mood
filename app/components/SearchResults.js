@@ -77,9 +77,17 @@ export default class SearchResults extends React.Component {
     const currentUserId = firebase.auth().currentUser.uid 
     const requestsRoot = firebase.database().ref('users/' + key + '/requests/' + currentUserId)
 
-    firebase.database().ref('users/' + currentUserId + '/username').once('value', (snap) => {
-      requestsRoot.set({
-        requestFrom: snap.val()
+    // firebase.database().ref('users/' + currentUserId + '/username').once('value', (snap) => {
+    //   requestsRoot.set({
+    //     requestFrom: snap.val()
+    //   })
+    // })
+
+    firebase.database().ref('users/' + currentUserId).once('value', (snapshot) => {
+      requestsRoot.update({
+        requestFromUsername: snapshot.val().username,
+        requestFromProfilePic: snapshot.val().profilePic,
+        requestFromMood: snapshot.val().mood,
       })
     })
   }
@@ -152,7 +160,7 @@ const styles = StyleSheet.create({
   profilePic: {
     height: 60,
     borderRadius: 30,
-    width: 60
+    width: 60,
   },
   modalContainer: {
     flex: 1,

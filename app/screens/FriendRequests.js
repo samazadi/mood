@@ -9,6 +9,7 @@ import {
   Image,
   TouchableHighlight,
   ActivityIndicator,
+  Button,
 } from 'react-native'
 
 export default class FriendRequests extends React.Component {
@@ -18,18 +19,19 @@ export default class FriendRequests extends React.Component {
       userData: {},
       dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
       showSpinner: true,
+      currentUserId: firebase.auth().currentUser.uid,
     }
   }
 
   componentDidMount = () => {
-    const currentUserId = firebase.auth().currentUser.uid
-    const requestsRef = firebase.database().ref('users/' + currentUserId + '/requests')
+    const requestsRef = firebase.database().ref('users/' + this.state.currentUserId + '/requests')
     requestsRef.on('value', (snapshot) => {
       const friendRequestArray = []
       snapshot.forEach((child) => {
         friendRequestArray.push({
-          username: child.val().requestFrom,
-          profilePic: child.val().profilePic,
+          username: child.val().requestFromUsername,
+          profilePic: child.val().requestFromProfilePic,
+          mood: child.val().requestFromMood,
           key: child.key
         })
       })
@@ -37,18 +39,43 @@ export default class FriendRequests extends React.Component {
         dataSource: this.state.dataSource.cloneWithRows(friendRequestArray),
         showSpinner: false,
       })
-    })   
+    })
+  }
+
+  deleteFriendRequest = (firnedUid, currentUid, rowData) => {
+    const requestsRef = firebase.database().ref('users/' + currentUid + '/requests/' + friendUid)
+    requestsRef.remove()
+  }
+
+  confirmFriendReequest = (friendUid, currentUid, rowData) => {
+    const currentFriendsRef = firebase.database().ref('users/' + currentUid + '/friends/' + friendUid)
+    const otherUserFriendsRef = firebase.database().ref('users/' + friendUid + '/friends/' + currentUid)
+
+    currentFriendsRef.set({
+      username: rowData.username,
+      profilePic: rowData.profilePic,
+      mood: rowData.mood
+    })
+
+    firebase.database().ref('users/' + currentUid).once('value').then((snapshot) => {
+      otherUserFriendsRef.set({
+        username: snapshot.val().username,
+        profilePic: snapshot.val().profilePic,
+        mood: snapshot.val().mood
+      })
+    })
+
+    this.deleteFriendRequest(firnedUid, currentUid)
+    this.deleteFriendRequest(currentUid, friendUid)
   }
 
   renderRow = (rowData) => {
+
     return (
       <TouchableHighlight
         underlayColor='#f8f8f8' 
         onPress={() => {
           this.setState({userData: rowData})
-          console.log('rowData is: ' + rowData)
-          console.log('rowData.username is: ' + rowData.username)
-          console.log('userData is: ' + this.state.userData)
         }}>
         <View style={{flexDirection:'row', padding:15}} >
           <Image 
@@ -56,7 +83,23 @@ export default class FriendRequests extends React.Component {
             style={styles.profilePic}
           />
           <View style={{justifyContent:'center', marginLeft:15}}>
-            <Text style={{fontSize:18}}>{rowData.username}</Text>
+            <Text style={styles.listText} numberOfLines={1} ellipsizeMode={'tail'}>{rowData.username}</Text>
+          </View>
+          <View style={{justifyContent: 'center'}}>
+            <Button 
+              title='Confirm'
+              onPress={() => {
+                this.confirmFriendReequest(rowData.key, this.state.currentUserId, rowData)
+              }}
+            />
+          </View>
+          <View style={{justifyContent: 'center'}}>
+            <Button
+              title='Delete'
+              onPress={() => {
+                this.deleteFriendRequest(rowData.key, this.state.currentUserId, rowData)
+              }}
+            />
           </View>
         </View>
       </TouchableHighlight>
@@ -83,6 +126,7 @@ export default class FriendRequests extends React.Component {
             dataSource={this.state.dataSource}
             renderRow={this.renderRow}
             renderSeparator={this.renderSeparator}
+            removeClippedSubviews={false}
             enableEmptySections
           />
         </View>
@@ -106,6 +150,15 @@ const styles = StyleSheet.create({
   spinnerContainer: {
     alignContent: 'center', 
     justifyContent: 'center', 
-    flex: 1
+    flex: 1,
+  },
+  profilePic: {
+    height: 60,
+    borderRadius: 30,
+    width: 60,
+  },
+  listText: {
+    fontSize: 18,
+    width: 120
   },
 })
