@@ -42,7 +42,7 @@ export default class FriendRequests extends React.Component {
     })
   }
 
-  deleteFriendRequest = (firnedUid, currentUid, rowData) => {
+  deleteFriendRequest = (friendUid, currentUid, rowData) => {
     const requestsRef = firebase.database().ref('users/' + currentUid + '/requests/' + friendUid)
     requestsRef.remove()
   }
@@ -57,7 +57,7 @@ export default class FriendRequests extends React.Component {
       mood: rowData.mood
     })
 
-    firebase.database().ref('users/' + currentUid).once('value').then((snapshot) => {
+    firebase.database().ref('users/' + currentUid).once('value').then((snapshot) => { 
       otherUserFriendsRef.set({
         username: snapshot.val().username,
         profilePic: snapshot.val().profilePic,
@@ -65,7 +65,7 @@ export default class FriendRequests extends React.Component {
       })
     })
 
-    this.deleteFriendRequest(firnedUid, currentUid)
+    this.deleteFriendRequest(friendUid, currentUid)
     this.deleteFriendRequest(currentUid, friendUid)
   }
 

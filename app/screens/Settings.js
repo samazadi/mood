@@ -74,6 +74,17 @@ export default class Settings extends React.Component {
       }).catch((error) => {
         console.log('Error completing re-auth: ' + error)
       })
+    } else if (key === 'mood') {
+      firebase.database().ref('users/' + user.uid).update({[key]: value})
+      firebase.database().ref('users/' + user.uid + '/friends').once('value')
+        .then((snapshot) => {
+          snapshot.forEach((child) => {
+            const friendMoodRef = firebase.database().ref('users/' + child.key + '/friends/' + user.uid)
+            friendMoodRef.update({
+              mood: value
+            })
+          })
+        })
     } else {
       firebase.database().ref('users/' + user.uid)
         .update({[key]: value})

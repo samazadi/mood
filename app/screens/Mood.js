@@ -10,130 +10,138 @@ import {
   TouchableHighlight,
   ActivityIndicator,
   Button,
+  FlatList,
 } from 'react-native'
 
 export default class Mood extends React.Component {
   constructor(props) {
     super(props)
+    this.currentUserId = firebase.auth().currentUser.uid
+    this.friendsRef = firebase.database().ref('users/' + this.currentUserId + '/friends')
     this.state = {
-      userData: {},
-      dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
-      showSpinner: true,
-      currentUserId: firebase.auth().currentUser.uid,
+      friendKeyData: []
     }
   }
 
   componentDidMount = () => {
-    const friendsRef = firebase.database().ref('users/' + this.state.currentUserId + '/friends')
+    //this.getUserData()
+
+    // const friendsRef = firebase.database().ref('users/' + currentUserId + '/friends')
+    // const friendArray = []
+    // friendsRef.on('child_added', (snapshot) => {
+    //   firebase.database().ref('users/' + snapshot.key).on('value', (child) => {
+    //     friendArray.push({
+    //       username: child.val().username,
+    //       mood: child.val().mood
+    //     })
+    //     console.log(friendArray)
+    //   })
+    // })
+
+    this.getFriends(this.friendsRef)
+
+  }
+
+  getFriends = (friendsRef) => { 
     friendsRef.on('value', (snapshot) => {
-      const friendsListArray = []
+
+      var friendKeyData = []
       snapshot.forEach((child) => {
-        friendsListArray.push({
-          username: child.val().requestFromUsername,
-          profilePic: child.val().requestFromProfilePic,
+        friendKeyData.push({
           key: child.key
         })
       })
+
       this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(friendsListArray),
-        showSpinner: false,
+        friendKeyData: friendKeyData
       })
+
     })
   }
 
-  deleteFriendRequest = (friendUid, currentUid) => {
-    const requestsRef = firebase.database().ref('users/' + currentUid + '/requests/' + friendUid)
-    requestsRef.remove()
-  }
+  componentDidUpdate = () => {
+    const friendKeys = this.state.friendKeyData
 
-  confirmFriendReequest = (friendUid, currentUid) => {
-    const currentFriendsRef = firebase.database().ref('users/' + currentUid + '/friends/' + friendUid)
-    const otherUserFriendsRef = firebase.database().ref('users/' + friendUid + '/friends/' + currentUid)
+    // const filteredFriendsArray = friendKeys.filter((user) => {
+    //   user.key !== 
+    // })
 
-    currentFriendsRef.set({
-      username: userData.username,
-      profilePic: userData.profilePic
+    console.log(friendKeys)
+
+    friendDetails = []
+    friendKeys.forEach((child) => {
+      firebase.database().ref('users/' + child.key).on('value', (snapshot) => {
+        friendDetails.push({
+          username: snapshot.val().username,
+          mood: snapshot.val().mood,
+          profilePic: snapshot.val().profilePic,
+          key: snapshot.key
+        })
+        console.log('1: ' + friendDetails)
+      })
+      console.log('2: ' + friendDetails)
     })
-    otherUserFriendsRef.set({
-      friends: true,
-    })
-
-    this.deleteFriendRequest(friendUid, currentUid)
-    this.deleteFriendRequest(currentUid, friendUid)
+    console.log('3: ' + friendDetails)
   }
 
-  renderRow = (rowData) => {
+  // componentDidUpdate = () => {
+  //   console.log(this.state.friendData)
+  // }
 
-    return (
-      <TouchableHighlight
-        underlayColor='#f8f8f8' 
-        onPress={() => {
-          this.setState({userData: rowData})
-        }}>
-        <View style={{flexDirection:'row', padding:15}} >
-          <Image 
-            source={{uri: rowData.profilePic}}
-            style={styles.profilePic}
-          />
-          <View style={{justifyContent:'center', marginLeft:15}}>
-            <Text style={styles.listText} numberOfLines={1} ellipsizeMode={'tail'}>{rowData.username}</Text>
-          </View>
-          <View style={{justifyContent: 'center'}}>
-            <Button 
-              title='Confirm'
-              onPress={() => {
-                this.confirmFriendReequest(rowData.key, this.state.currentUserId)
-              }}
-            />
-          </View>
-          <View style={{justifyContent: 'center'}}>
-            <Button
-              title='Delete'
-              onPress={() => {
-                this.deleteFriendRequest(rowData.key, this.state.currentUserId)
-              }}
-            />
-          </View>
+  // getUserData = async () => {
+  //   console.log('i started')
+  //   const userDataResult = await this.fetchUserData()
+  //   console.log('userdata result: ' + userDataResult)
+  // }
+
+  // fetchUserData = () => {
+  //   console.log('now i started')
+  //   const friendsRef = firebase.database().ref('users/' + currentUserId + '/friends')
+  //   friendsRef.on('child_added', (snapshot) => {
+  //     firebase.database().ref('users/' + snapshot.key).on('value', (child) => {
+  //       console.log('child val here: ' + child.val())
+  //       this.setState({
+  //         friendData: child.val()
+  //       })
+  //       console.log(this.state.friendData)
+  //     })
+  //   })
+  //   console.log('im about to leave')
+  // }
+
+  renderItem = ({item}) => (
+    <TouchableHighlight
+      underlayColor='#f8f8f8' 
+      key={item.key}
+      onPress={() => {
+        console.log('hit')
+      }}>
+      <View style={{flexDirection:'row', padding:15}} >
+        <Image 
+          source={{uri: item.profilePic}}
+          style={styles.profilePic}
+        />
+        <View style={{justifyContent:'center', marginLeft:15}}>
+          <Text style={styles.listText}>{item.username}</Text>
+          <Text>{item.mood}</Text>
         </View>
-      </TouchableHighlight>
-    )
-  }
-
-  renderSeparator = (sectionID, rowID) => {
-    return (
-      <View key={rowID} style={{height:1, backgroundColor:'#ddd'}} />
-    )
-  }
-
-  renderListOrSpinner = () => {
-    if (this.state.showSpinner) {
-      return (
-        <View style={styles.spinnerContainer}>
-          <ActivityIndicator animating={true} size='large' />
-        </View>
-      )
-    } else {
-      return (
-        <View style={styles.container}>
-          <ListView
-            dataSource={this.state.dataSource}
-            renderRow={this.renderRow}
-            renderSeparator={this.renderSeparator}
-            removeClippedSubviews={false}
-            enableEmptySections
-          />
-        </View>
-      )
-    }
-  }
-
-  render() {
-    return (
-      <View style={styles.container}>
-        {this.renderListOrSpinner()}
       </View>
+    </TouchableHighlight>
+  )
+
+  keyExtractor = (item, index) => item.id
+
+  render = () => {
+    return(
+      <FlatList
+        data={this.state.friendData}
+        renderItem={this.renderItem}
+        keyExtractor={this.keyExtractor}
+        key={this.props.item}
+      />
     )
   }
+
 }
 
 const styles = StyleSheet.create({
@@ -152,6 +160,5 @@ const styles = StyleSheet.create({
   },
   listText: {
     fontSize: 18,
-    width: 120
   },
 })
