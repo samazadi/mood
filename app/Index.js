@@ -1,6 +1,6 @@
 import { StackNavigator, TabNavigator } from 'react-navigation'
 import React from 'react'
-import { Text, } from 'react-native'
+import { Text, View } from 'react-native'
 import firebase from 'firebase'
 import { FontAwesome } from '@expo/vector-icons';
 
@@ -10,6 +10,7 @@ import Mood from './screens/Mood'
 import Settings from './screens/Settings'
 import Search from './screens/Search'
 import FriendRequests from './screens/FriendRequests'
+import FriendRequestTab from './components/FriendRequestTab'
 
 const firebaseConfig = {
   apiKey: "AIzaSyAs8kiZwakuQACvAIBRrLktGprs5pNDoQo",
@@ -33,7 +34,10 @@ const homeTab = TabNavigator({
     screen: FriendRequests,
     navigationOptions: {
       tabBarIcon: ({ tintColor }) => (
-        <FontAwesome name='user-plus' size={20} color={tintColor} />
+        <View>
+          <FontAwesome name='user-plus' size={20} color={tintColor} />
+          <FriendRequestTab />
+        </View>
       ),
       title: 'Friend Requests',
     }

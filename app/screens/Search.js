@@ -2,6 +2,7 @@ import React from 'react'
 import SearchResults from '../components/SearchResults'
 
 import { Ionicons } from '@expo/vector-icons'
+import { SearchBar } from 'react-native-elements'
 
 import { 
   StyleSheet, 
@@ -22,7 +23,7 @@ export default class Search extends React.Component {
   render() { 
     return (
       <View style={styles.container}>
-        <View style={styles.formContainer}>
+        {/* <View style={styles.formContainer}>
           <Ionicons style={styles.searchIcon} name='ios-search-outline' size={20} color='grey'/>
           <TextInput 
             style={styles.formInput}
@@ -31,7 +32,15 @@ export default class Search extends React.Component {
             }}
             placeholder={'Search'}
           />
-        </View>
+        </View> */}
+        <SearchBar 
+          onChangeText={searchInput => {
+            this.setState({searchInput})
+          }}
+          placeholder='Search...' 
+          lightTheme 
+          round 
+        />
         <View style={styles.searchResultsContainer}>
           <SearchResults searchInput={this.state.searchInput}/>
         </View>   

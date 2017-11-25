@@ -13,101 +13,41 @@ import {
   FlatList,
 } from 'react-native'
 
+import { SearchBar } from 'react-native-elements'
+
 export default class Mood extends React.Component {
   constructor(props) {
     super(props)
     this.currentUserId = firebase.auth().currentUser.uid
     this.friendsRef = firebase.database().ref('users/' + this.currentUserId + '/friends')
     this.state = {
-      friendKeyData: []
+      friendData: []
     }
   }
 
   componentDidMount = () => {
-    //this.getUserData()
-
-    // const friendsRef = firebase.database().ref('users/' + currentUserId + '/friends')
-    // const friendArray = []
-    // friendsRef.on('child_added', (snapshot) => {
-    //   firebase.database().ref('users/' + snapshot.key).on('value', (child) => {
-    //     friendArray.push({
-    //       username: child.val().username,
-    //       mood: child.val().mood
-    //     })
-    //     console.log(friendArray)
-    //   })
-    // })
-
     this.getFriends(this.friendsRef)
-
   }
 
   getFriends = (friendsRef) => { 
     friendsRef.on('value', (snapshot) => {
 
-      var friendKeyData = []
+      const friendData = []
       snapshot.forEach((child) => {
-        friendKeyData.push({
+        friendData.push({
+          username: child.val().username,
+          mood: child.val().mood,
+          profilePic: child.val().profilePic,
           key: child.key
         })
       })
 
       this.setState({
-        friendKeyData: friendKeyData
+        friendData: friendData
       })
 
     })
   }
-
-  componentDidUpdate = () => {
-    const friendKeys = this.state.friendKeyData
-
-    // const filteredFriendsArray = friendKeys.filter((user) => {
-    //   user.key !== 
-    // })
-
-    console.log(friendKeys)
-
-    friendDetails = []
-    friendKeys.forEach((child) => {
-      firebase.database().ref('users/' + child.key).on('value', (snapshot) => {
-        friendDetails.push({
-          username: snapshot.val().username,
-          mood: snapshot.val().mood,
-          profilePic: snapshot.val().profilePic,
-          key: snapshot.key
-        })
-        console.log('1: ' + friendDetails)
-      })
-      console.log('2: ' + friendDetails)
-    })
-    console.log('3: ' + friendDetails)
-  }
-
-  // componentDidUpdate = () => {
-  //   console.log(this.state.friendData)
-  // }
-
-  // getUserData = async () => {
-  //   console.log('i started')
-  //   const userDataResult = await this.fetchUserData()
-  //   console.log('userdata result: ' + userDataResult)
-  // }
-
-  // fetchUserData = () => {
-  //   console.log('now i started')
-  //   const friendsRef = firebase.database().ref('users/' + currentUserId + '/friends')
-  //   friendsRef.on('child_added', (snapshot) => {
-  //     firebase.database().ref('users/' + snapshot.key).on('value', (child) => {
-  //       console.log('child val here: ' + child.val())
-  //       this.setState({
-  //         friendData: child.val()
-  //       })
-  //       console.log(this.state.friendData)
-  //     })
-  //   })
-  //   console.log('im about to leave')
-  // }
 
   renderItem = ({item}) => (
     <TouchableHighlight
@@ -129,15 +69,31 @@ export default class Mood extends React.Component {
     </TouchableHighlight>
   )
 
-  keyExtractor = (item, index) => item.id
+  renderSeparator = () => {
+    return (
+      <View 
+        style={{
+          height: 1,
+          //width: '100%',
+          backgroundColor: '#CED0CE',
+          //marginLeft: '14%'
+        }}
+      />
+    )
+  }
+
+  renderHeader = () => {
+    return <SearchBar placeholder='Type here...' lightTheme round />
+  }
 
   render = () => {
     return(
       <FlatList
         data={this.state.friendData}
         renderItem={this.renderItem}
-        keyExtractor={this.keyExtractor}
-        key={this.props.item}
+        keyExtractor={item => item.key}
+        ListHeaderComponent={this.renderHeader}
+        ItemSeparatorComponent={this.renderSeparator}
       />
     )
   }
